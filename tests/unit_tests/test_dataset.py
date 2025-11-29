@@ -29,3 +29,40 @@ class TestDataset(unittest.TestCase):
         dataset = Dataset.from_random(10, 5, 3, features=['a', 'b', 'c', 'd', 'e'], label='y')
         self.assertEqual((10, 5), dataset.shape())
         self.assertTrue(dataset.has_label())
+
+    
+    def test_dropna(self):
+        X = np.array([[1.0, 2.0], [np.nan, 3.0], [4.0, 5.0]])
+        y = np.array([0, 1, 0])
+        dataset = Dataset(X, y, features=["f1", "f2"], label="y")
+        
+        dataset.dropna()
+        
+        self.assertEqual((2, 2), dataset.shape())
+
+    def test_fillna_constant(self):
+        X = np.array([[1.0, 2.0], [np.nan, 3.0]])
+        y = np.array([0, 1])
+        dataset = Dataset(X, y, features=["f1", "f2"], label="y")
+        
+        dataset.fillna(0.0)
+        
+        self.assertEqual(0.0, dataset.X[1, 0])
+
+    def test_fillna_mean(self):
+        X = np.array([[1.0, 2.0], [np.nan, 3.0], [5.0, 4.0]])
+        y = np.array([0, 1, 0])
+        dataset = Dataset(X, y, features=["f1", "f2"], label="y")
+        
+        dataset.fillna("mean")
+        
+        self.assertEqual(3.0, dataset.X[1, 0])
+
+    def test_remove_by_index(self):
+        X = np.array([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
+        y = np.array([0, 1, 0])
+        dataset = Dataset(X, y, features=["f1", "f2"], label="y")
+        
+        dataset.remove_by_index(1)
+        
+        self.assertEqual((2, 2), dataset.shape())

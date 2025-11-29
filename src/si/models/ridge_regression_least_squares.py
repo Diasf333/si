@@ -7,7 +7,7 @@ from si.metrics.mse import mse
 
 class RidgeRegressionLeastSquares(Model):
     """
-    Ridge Regression using Least Squares (closed-form solution).
+    Ridge Regression using Least Squares.
     
     Ridge Regression is a linear regression model with L2 regularization.
     This implementation uses the normal equations to directly compute the coefficients

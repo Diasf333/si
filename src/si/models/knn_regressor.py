@@ -75,16 +75,16 @@ class KNNRegressor(Model):
         value: float
             The predicted target value.
         """
-        # 1. Calculate the distance between the sample and the training samples
+        # Calculate the distance between the sample and the training samples
         distances = self.distance(sample, self.dataset.X)
 
-        # 2. Obtain the indexes of the k most similar examples (shortest distance)
+        # Obtain the indexes of the k most similar examples (shortest distance)
         k_nearest_indx = np.argsort(distances)[:self.k]
 
-        # 3. Retrieve the corresponding values in y
+        # Retrieve the corresponding values in y
         k_nearest_values = self.dataset.y[k_nearest_indx]
 
-        # 4. Calculate the average of these values
+        # Calculate the average of these values
         return float(np.mean(k_nearest_values))
 
     def _predict(self, dataset: Dataset) -> np.ndarray:
@@ -101,7 +101,7 @@ class KNNRegressor(Model):
         predictions: np.ndarray
             The predicted target values.
         """
-        # 5. Apply _get_prediction to all samples in the testing dataset
+        # Apply _get_prediction to all samples in the testing dataset
         predictions = np.apply_along_axis(self._get_prediction, axis=1, arr=dataset.X)
         return predictions
 

@@ -126,6 +126,61 @@ class Dataset:
         }
         return pd.DataFrame.from_dict(data, orient="index", columns=self.features)
 
+    def dropna(self) -> "Dataset":
+        """
+        Removes all samples containing at least one null value (NaN).
+        Returns
+        -------
+        self : Dataset
+        Modified Dataset object
+        """
+        mask = ~np.isnan(self.X).any(axis=1)
+        self.X = self.X[mask]
+        if self.y is not None:
+            self.y = self.y[mask]
+       
+        return self
+
+    def fillna(self, value: float | str) -> "Dataset":
+        """
+        Replaces all null values with a float/int or either the mean or median of the feature/variable.
+
+        Returns
+        -------
+        Modified Dataset object
+        """
+        mask = np.isnan(self.X)
+        if isinstance(value, (float, int)):
+            self.X = np.where(mask, value, self.X)
+        elif value == "mean":
+            fill_mean = self.get_mean()[None, :]
+            self.X = np.where(mask, fill_mean, self.X)
+        elif value == "median":
+            fill_median = self.get_median()[None, :]
+            self.X = np.where(mask, fill_median, self.X)
+        else:
+            raise ValueError("Chosen option must be a float, 'mean' or 'median'")
+        return self
+
+    def remove_by_index(self, index: int) -> "Dataset":
+        """
+        Removes a sample (row) by its index and updates the label vector accordingly.
+        Parameters
+        ----------
+        index : int
+            The index of the sample (row) to remove.
+        Returns
+        -------
+        self : Dataset
+            The modified Dataset object.
+        """
+        self.X = np.delete(self.X, index, axis=0)
+        if self.y is not None:
+            self.y = np.delete(self.y, index, axis=0)
+        return self
+
+
+
     @classmethod
     def from_dataframe(cls, df: pd.DataFrame, label: str = None):
         """
