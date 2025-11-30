@@ -8,9 +8,8 @@ from si.model_selection.split import stratified_train_test_split
 class TestStratifiedTrainTestSplit(TestCase):
 
     def setUp(self):
-        # standard iris: 150 samples, 3 classes, 50 each
         self.iris = read_csv(
-            "../datasets/iris/iris.csv",
+            "C:\\Users\\UTILIZADOR\\Documents\\GitHub\\si\\datasets\\iris\\iris.csv",
             sep=",",
             features=True,
             label=True

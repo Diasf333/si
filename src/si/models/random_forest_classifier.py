@@ -4,7 +4,6 @@ from si.base.model import Model
 from si.data.dataset import Dataset
 from si.metrics.accuracy import accuracy
 from si.models.decision_tree_classifier import DecisionTreeClassifier
-from scipy.stats import mode
 
 
 class RandomForestClassifier(Model):
@@ -116,13 +115,20 @@ class RandomForestClassifier(Model):
             preds = tree.predict(Dataset(X_subset))
             predictions.append(preds)
 
+        # shape: (n_trees, n_samples)
         all_preds = np.vstack(predictions)
 
-        # Get the most common predicted class for each sample
-        y_pred, _ = mode(all_preds, axis=0, keepdims=False)
+        # Majority vote with np.unique (works for string labels too)
+        n_samples = all_preds.shape[1]
+        y_pred = []
 
-        # Return predictions
-        return y_pred.ravel()
+        for j in range(n_samples):
+            col = all_preds[:, j]
+            values, counts = np.unique(col, return_counts=True)
+            majority_label = values[np.argmax(counts)]
+            y_pred.append(majority_label)
+
+        return np.array(y_pred)
 
     def _score(self, dataset: Dataset, predictions: np.ndarray) -> float:
         """
@@ -144,7 +150,3 @@ class RandomForestClassifier(Model):
         """
         # Computes the accuracy between predicted and real values
         return accuracy(dataset.y, predictions)
-
-
-
-
