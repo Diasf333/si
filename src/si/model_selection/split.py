@@ -51,9 +51,9 @@ def stratified_train_test_split(dataset: Dataset, test_size: float =0.2, random_
     Parameters
     ----------
     dataset: Dataset
-        The dataset to split
+        The Dataset object to split into training and testing data
     test_size: float
-        The proportion of the dataset to include in the test split
+        The size of the testing Dataset (e.g., 0.2 for 20%)
     random_state: int
         The seed of the random number generator
 

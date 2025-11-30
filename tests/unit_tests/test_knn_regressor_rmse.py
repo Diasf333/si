@@ -11,7 +11,7 @@ class TestKNNRegressor(TestCase):
 
     def setUp(self):
         self.cpu = read_csv(
-            "C:\\Users\\UTILIZADOR\\Documents\\GitHub\\si\\datasets\\iris\\iris.csv",
+            "C:\\Users\\UTILIZADOR\\Documents\\GitHub\\si\\datasets\\cpu\\cpu.csv",
             sep=",",
             features=True,
             label=True

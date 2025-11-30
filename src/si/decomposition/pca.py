@@ -19,7 +19,7 @@ class PCA(Transformer):
     Attributes
     ----------
     mean : np.ndarray of shape (n_features,)
-        Mean of each feature in the training data.
+        Mean of the samples.
     components : np.ndarray of shape (n_components, n_features)
         Principal components (eigenvectors) sorted by explained variance.
     explained_variance : np.ndarray of shape (n_components,)
@@ -43,8 +43,7 @@ class PCA(Transformer):
 
     def _fit(self, dataset: Dataset) -> "PCA":
         """
-        Fit the PCA model using eigenvalue decomposition of the covariance matrix.
-
+        Fit the PCA model estimating the mean, principal components, and explained variance
         Parameters
         ----------
         dataset : Dataset

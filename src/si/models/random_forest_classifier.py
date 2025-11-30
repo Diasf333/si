@@ -38,16 +38,10 @@ class RandomForestClassifier(Model):
     def _fit(self, dataset: Dataset):
         """
         train the decision trees of the random forest
-
-
-
         Parameters
         ----------
         dataset : Dataset
             Dataset object containing features and labels.
-
-
-
         Returns
         -------
         self : RandomForestClassifier
@@ -92,16 +86,10 @@ class RandomForestClassifier(Model):
     def _predict(self, dataset: Dataset) -> np.ndarray:
         """
         predicts the labels using the ensemble models
-
-
-
         Parameters
         ----------
         dataset : Dataset
             Dataset with the samples to classify.
-
-
-
         Returns
         -------
         y_pred : np.ndarray
@@ -133,16 +121,10 @@ class RandomForestClassifier(Model):
     def _score(self, dataset: Dataset, predictions: np.ndarray) -> float:
         """
         computes the accuracy between predicted and real labels
-
-
-
         Parameters
         ----------
         dataset : Dataset
             Dataset containing ground truth labels.
-
-
-
         Returns
         -------
         score : float

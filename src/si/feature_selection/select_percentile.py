@@ -23,9 +23,9 @@ class SelectPercentile(Transformer):
     Attributes
     ----------
     F : np.ndarray of shape (n_features,)
-        F scores of features estimated by the score_function.
+        the F value for each feature estimated by the score_function
     p : np.ndarray of shape (n_features,)
-        p-values of the F scores estimated by the score_function.
+        the p value for each feature estimated by the score_function
     """
 
     def __init__(
@@ -36,14 +36,6 @@ class SelectPercentile(Transformer):
     ):
         """
         Initialize the SelectPercentile transformer.
-
-        Parameters
-        ----------
-        score_function : callable, default=f_classification
-            Variance analysis function that receives a Dataset and returns
-            the F scores and p-values for each feature.
-        percentile : int, default=40
-            Percentile for selecting features (between 0 and 100).
         """
         super().__init__(**kwargs)
         self.score_function = score_function
@@ -53,7 +45,8 @@ class SelectPercentile(Transformer):
 
     def _fit(self, dataset: Dataset) -> "SelectPercentile":
         """
-        Fit the SelectPercentile transformer by computing the F scores and p-values.
+        Fit the SelectPercentile by estimating the F and p values for each feature using the scoring_func;
+        returns itself (self)
 
         Parameters
         ----------
@@ -85,15 +78,13 @@ class SelectPercentile(Transformer):
         X_new : np.ndarray of shape (n_samples, n_selected_features)
             The array with the selected features.
         """
-        # number of features
+        
         n_features = dataset.X.shape[1]
-
         # number of features to select (round to at least 1)
         k = int(np.ceil(self.percentile / 100 * n_features))
         k = max(1, min(k, n_features))
 
         # compute threshold F-value at (100 - percentile) percentile
-        # e.g., percentile=40 -> we want top 40% -> threshold at 60th percentile
         cutoff = np.percentile(self.F, 100 - self.percentile)
 
         # initial mask: features strictly greater than cutoff
