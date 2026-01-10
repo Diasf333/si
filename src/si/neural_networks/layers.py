@@ -141,3 +141,124 @@ class DenseLayer(Layer):
             The shape of the output of the layer.
         """
         return (self.n_units,) 
+
+
+class Dropout(Layer):
+    """
+    Dropout
+
+    Dropout layer that randomly sets a fraction of the input units to zero
+    during training to prevent overfitting.
+
+    Parameters
+    ----------
+    probability : float
+        Dropout rate between 0 and 1. Fraction of units to drop.
+
+    Attributes
+    ----------
+    probability : float
+        Dropout rate between 0 and 1.
+    mask : np.ndarray
+        Binomial mask applied to the input during training.
+    input : np.ndarray
+        Input of the layer.
+    output : np.ndarray
+        Output of the layer.
+    """
+
+    def __init__(self, probability: float) -> None:
+        super().__init__()
+        if not 0.0 <= probability < 1.0:
+            raise ValueError("probability must be in [0, 1).")
+        self.probability = probability
+        self.mask: np.ndarray | None = None
+        self.input: np.ndarray | None = None
+        self.output: np.ndarray | None = None
+
+    def forward_propagation(self, input_data: np.ndarray, training: bool = True) -> np.ndarray:
+        """
+        Perform forward propagation through the dropout layer.
+
+        In training mode, applies a binomial mask and scales the activations
+        to keep the expected value unchanged. In inference mode, returns
+        the input unchanged.
+
+        Parameters
+        ----------
+        input_data : np.ndarray
+            Input array to the layer.
+        training : bool, default=True
+            Whether the layer is in training mode or inference mode.
+
+        Returns
+        -------
+        output : np.ndarray
+            Output after applying dropout (or the original input in inference mode).
+        """
+        self.input = input_data
+
+        if training:
+            # Keep probability = 1 - dropout_rate
+            keep_prob = 1.0 - self.probability
+            if keep_prob <= 0.0:
+                raise ValueError("keep probability must be > 0.0.")
+
+            # Scale factor to maintain expected activations
+            scale = 1.0 / keep_prob
+
+            # Binomial mask: 1 with prob=keep_prob, 0 with prob=probability
+            self.mask = np.random.binomial(1, keep_prob, size=input_data.shape)
+
+            self.output = input_data * self.mask * scale
+            return self.output
+        else:
+            # No dropout in inference
+            self.mask = None
+            self.output = input_data
+            return input_data
+
+    def backward_propagation(self, output_error: np.ndarray) -> np.ndarray:
+        """
+        Perform backward propagation through the dropout layer.
+
+        Parameters
+        ----------
+        output_error : np.ndarray
+            The gradient of the loss with respect to the output of this layer.
+
+        Returns
+        -------
+        input_error : np.ndarray
+            The gradient of the loss with respect to the input of this layer.
+        """
+        if self.mask is None:
+            # In inference mode, dropout is inactive; gradient passes unchanged.
+            return output_error
+
+        input_error = output_error * self.mask
+        return input_error
+
+    def output_shape(self) -> tuple:
+        """
+        Returns the output shape of the layer.
+
+        Returns
+        -------
+        shape : tuple
+            The shape of the output, same as the input shape.
+        """
+        if self.input is None:
+            raise ValueError("Layer has not been forward propagated yet.")
+        return self.input.shape
+
+    def parameters(self) -> int:
+        """
+        Return the number of learnable parameters of the layer.
+
+        Returns
+        -------
+        n_parameters : int
+            Number of parameters. Dropout has no learnable parameters, so this is 0.
+        """
+        return 0

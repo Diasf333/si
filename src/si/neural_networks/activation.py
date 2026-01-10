@@ -177,3 +177,94 @@ class ReLUActivation(ActivationLayer):
             The derivative of the activation function.
         """
         return np.where(input >= 0, 1, 0)
+
+
+class TanhActivation(ActivationLayer):
+    """
+    TanhActivation
+
+    Applies the hyperbolic tangent activation function element-wise.
+    Maps inputs to the range [-1, 1].
+    """
+
+    def activation_function(self, input_data: np.ndarray) -> np.ndarray:
+        """
+        Compute tanh(x) element-wise.
+
+        Parameters
+        ----------
+        input_data : np.ndarray
+            Input array.
+
+        Returns
+        -------
+        output : np.ndarray
+            tanh(input_data).
+        """
+        return np.tanh(input_data)
+
+    def derivative(self, input_data: np.ndarray) -> np.ndarray:
+        """
+        Compute derivative of tanh(x).
+
+        Parameters
+        ----------
+        input_data : np.ndarray
+            Input array.
+
+        Returns
+        -------
+        grad : np.ndarray
+            1 - tanh(x)^2.
+        """
+        t = np.tanh(input_data)
+        return 1.0 - t**2
+
+
+
+class SoftmaxActivation(ActivationLayer):
+    """
+    SoftmaxActivation
+
+    Applies the softmax activation function along the last axis,
+    converting raw scores into probabilities that sum to 1.
+    """
+
+    def activation_function(self, input_data: np.ndarray) -> np.ndarray:
+        """
+        Compute stable softmax.
+
+        Parameters
+        ----------
+        input_data : np.ndarray
+            Input array of shape (n_samples, n_classes).
+
+        Returns
+        -------
+        output : np.ndarray
+            Softmax probabilities with same shape as input.
+        """
+        # subtract max for numerical stability
+        x_shifted = input_data - np.max(input_data, axis=1, keepdims=True)
+        exp_x = np.exp(x_shifted)
+        sum_exp = np.sum(exp_x, axis=1, keepdims=True)
+        return exp_x / sum_exp
+
+    def derivative(self, input_data: np.ndarray) -> np.ndarray:
+        """
+        Simplified derivative for softmax when combined with suitable loss
+        (e.g., cross-entropy). Here, returns the Jacobian-diagonal form:
+        softmax(x) * (1 - softmax(x)).
+
+        Parameters
+        ----------
+        input_data : np.ndarray
+            Input array.
+
+        Returns
+        -------
+        grad : np.ndarray
+            Element-wise softmax derivative approximation.
+        """
+        s = self.activation_function(input_data)
+        return s * (1.0 - s)

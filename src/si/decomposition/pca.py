@@ -65,7 +65,7 @@ class PCA(Transformer):
         eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
 
         # Sort eigenvalues/eigenvectors by descending eigenvalue
-        idx = np.argsort(eigenvalues)[::-1]
+        idx = np.argsort(eigenvalues)[::-1]#
         eigenvalues = eigenvalues[idx]
         eigenvectors = eigenvectors[:, idx]
 

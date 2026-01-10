@@ -153,7 +153,7 @@ class Dataset:
         if isinstance(value, (float, int)):
             self.X = np.where(mask, value, self.X)
         elif value == "mean":
-            fill_mean = self.get_mean()[None, :]
+            fill_mean = self.get_mean()[None, :]#
             self.X = np.where(mask, fill_mean, self.X)
         elif value == "median":
             fill_median = self.get_median()[None, :]
