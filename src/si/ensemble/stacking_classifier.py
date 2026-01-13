@@ -92,7 +92,8 @@ class StackingClassifier(Model):
         y_pred = self.final_model.predict(meta_dataset)
         return y_pred
 
-    def _score(self, dataset: Dataset) -> float:
+
+    def _score(self, dataset: Dataset, predictions=None) -> float:
         """
         Compute the accuracy between predicted and real labels.
 
@@ -100,11 +101,14 @@ class StackingClassifier(Model):
         ----------
         dataset : Dataset
             Test dataset.
+        predictions : np.ndarray, optional
+            Precomputed predictions. If None, they are computed.
 
         Returns
         -------
-        score : float
+        float
             Accuracy score of the stacking classifier.
         """
-        y_pred = self.predict(dataset)
-        return accuracy(dataset.y, y_pred)
+        if predictions is None:
+            predictions = self.predict(dataset)
+        return accuracy(dataset.y, predictions)

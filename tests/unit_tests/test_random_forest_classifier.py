@@ -4,6 +4,10 @@ import numpy as np
 from si.io.csv_file import read_csv
 from si.model_selection.split import train_test_split
 from si.models.random_forest_classifier import RandomForestClassifier
+import os
+from datasets import DATASETS_PATH
+
+
 
 
 class TestRandomForestClassifier(TestCase):
@@ -11,7 +15,7 @@ class TestRandomForestClassifier(TestCase):
     def setUp(self):
         # Load iris dataset
         # Adjust the path if your datasets folder is different
-        self.iris = read_csv("C:\\Users\\UTILIZADOR\\Documents\\GitHub\\si\\datasets\\iris\\iris.csv", sep=",", features=True, label=True)
+        self.iris = read_csv("datasets/iris/iris.csv", sep=",", features=True, label=True)
 
     def test_fit_creates_trees(self):
         train_ds, _ = train_test_split(self.iris, test_size=0.2, random_state=42)
@@ -74,3 +78,40 @@ class TestRandomForestClassifier(TestCase):
 
         # On iris, a reasonable random forest should be quite accurate
         self.assertGreater(score, 0.8)
+
+
+
+
+class TestRandomForestClassifier(TestCase):
+    def setUp(self) -> None:
+        iris_path = os.path.join(DATASETS_PATH, "iris", "iris.csv")
+        self.dataset = read_csv(
+            filename=iris_path,
+            sep=",",
+            features=True,
+            label=True
+        )
+        self.train_ds, self.test_ds = train_test_split(
+            self.dataset,
+            test_size=0.2,
+            random_state=42
+        )
+
+    def test_random_forest_classifier(self) -> None:
+        rf = RandomForestClassifier(
+            nestimators=50,
+            maxfeatures=None,
+            minsamplesplit=2,
+            maxdepth=10,
+            mode="gini",
+            seed=42
+        )
+
+        rf.fit(self.train_ds)
+        score = rf.score(self.test_ds)
+
+        # basic sanity checks
+        self.assertIsInstance(score, (float, np.floating))
+        self.assertGreaterEqual(score, 0.0)
+        self.assertLessEqual(score, 1.0)
+

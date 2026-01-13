@@ -1,10 +1,6 @@
 from unittest import TestCase
 
-from datasets import DATASETS_PATH
-
-import os
-
-from si.io.data_file import read_data_file
+from si.io.csv_file import read_csv
 from si.model_selection.split import train_test_split
 from si.neural_networks.activation import ReLUActivation, SigmoidActivation
 
@@ -12,9 +8,7 @@ class TestSigmoidLayer(TestCase):
 
     def setUp(self):
         
-        self.csv_file = os.path.join(DATASETS_PATH, 'breast_bin', 'breast-bin.csv')
-
-        self.dataset = read_data_file(filename=self.csv_file, label=True, sep=",")
+        self.dataset = read_csv("datasets/breast_bin/breast-bin.csv", sep=",",features=True,label=True)  
 
         self.train_dataset, self.test_dataset = train_test_split(self.dataset)
 
@@ -36,9 +30,7 @@ class TestRELULayer(TestCase):
 
     def setUp(self):
         
-        self.csv_file = os.path.join(DATASETS_PATH, 'breast_bin', 'breast-bin.csv')
-
-        self.dataset = read_data_file(filename=self.csv_file, label=True, sep=",")
+        self.dataset = read_csv("datasets/breast_bin/breast-bin.csv", sep=",",features=True,label=True)  
 
         self.train_dataset, self.test_dataset = train_test_split(self.dataset)
 

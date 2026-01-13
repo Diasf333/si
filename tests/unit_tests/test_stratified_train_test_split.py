@@ -9,7 +9,7 @@ class TestStratifiedTrainTestSplit(TestCase):
 
     def setUp(self):
         self.iris = read_csv(
-            "C:\\Users\\UTILIZADOR\\Documents\\GitHub\\si\\datasets\\iris\\iris.csv",
+            "datasets/iris/iris.csv",
             sep=",",
             features=True,
             label=True
